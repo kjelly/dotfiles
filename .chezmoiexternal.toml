@@ -1,0 +1,20 @@
+[".config/nvim/autoload/plug.vim"]
+    type = "file"
+    url = "https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim"
+    refreshPeriod = "168h"
+
+
+["bin/t"]
+    type = "file"
+    url = "https://raw.githubusercontent.com/kjelly/auto_config/master/roles/tmux/files/t.py"
+    refreshPeriod = "168h"
+
+["bin/workspace"]
+    type = "file"
+    url = "https://raw.githubusercontent.com/kjelly/auto_config/master/roles/tmux/files/workspace.nu"
+    refreshPeriod = "168h"
+
+["bin/tmux-set-background"]
+    type = "file"
+    url = "https://raw.githubusercontent.com/kjelly/auto_config/master/roles/tmux/files/tmux-set-background.sh"
+    refreshPeriod = "168h"
