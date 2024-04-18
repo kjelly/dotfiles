@@ -21,3 +21,15 @@
     url = "https://raw.githubusercontent.com/kjelly/auto_config/master/roles/tmux/files/tmux-set-background.sh"
     refreshPeriod = "168h"
     executable = true
+
+["bin/hterm-copy"]
+    type = "file"
+    url = "https://raw.githubusercontent.com/kjelly/auto_config/master/roles/mybin/files/mybin/hterm-copy.sh"
+    refreshPeriod = "168h"
+    executable = true
+
+["bin/hterm-notify"]
+    type = "file"
+    url = "https://raw.githubusercontent.com/kjelly/auto_config/master/roles/mybin/files/mybin/hterm-notify.sh"
+    refreshPeriod = "168h"
+    executable = true
