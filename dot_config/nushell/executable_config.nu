@@ -1654,13 +1654,6 @@ $env.config.keybindings = ($env.config.keybindings | append {
       mode: [emacs, vi_normal, vi_insert]
       event: { send: esc }
 })
-$env.config.keybindings = ($env.config.keybindings | append {
-      name: another_esc_command
-      modifier: control
-      keycode: char_s
-      mode: [emacs, vi_normal, vi_insert]
-      event: { mode: Vi_Normal }
-})
 $env._clipboard = ( try { $env._clipboard } catch { [ ] })
 
 def pretty [  ] {
