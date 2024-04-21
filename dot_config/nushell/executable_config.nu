@@ -233,7 +233,7 @@ $env.config = {
     buffer_editor: "" # command that will be used to edit the current line buffer with ctrl+o, if unset fallback to $env.EDITOR and $env.VISUAL
     use_ansi_coloring: true
     bracketed_paste: true # enable bracketed paste, currently useless on windows
-    edit_mode: emacs # emacs, vi
+    edit_mode: vi # emacs, vi
     shell_integration: false # enables terminal shell integration. Off by default, as some terminals have issues with this.
     render_right_prompt_on_last_line: false # true or false to enable or disable right prompt to be rendered on last line of the prompt.
     use_kitty_protocol: false # enables keyboard enhancement protocol implemented by kitty console, only if your terminal support this.
@@ -867,6 +867,7 @@ $env.config = {
 $env.config.show_banner = false
 $env.config.cursor_shape.emacs = "block"
 $env.config.edit_mode = "emacs"
+$env.config.edit_mode = "vi"
 
 $env.EDITOR = nvim
 alias vim = nvim
@@ -1188,7 +1189,8 @@ let repo_list = ["nushell/nushell", "casey/just", "ajeetdsouza/zoxide", "Ryooooo
  "xxxserxxx/gotop", "orhun/kmon", "browsh-org/browsh", "mrusme/planor", "jesseduffield/lazydocker",
  "tsenart/vegeta", "nicolas-van/multirun", "rsteube/carapace-bin", "urbanogilson/lineselect",
  "ast-grep/ast-grep", "jirutka/tty-copy", "theimpostor/osc", "d-kuro/kubectl-fuzzy",
- "nektos/act",
+ "nektos/act", "FiloSottile/age", "marcosnils/bin", "twpayne/chezmoi"
+
 ]
 
 def repo [ ] {
@@ -1644,6 +1646,20 @@ $env.config.keybindings = ($env.config.keybindings | append {
           { edit: complete }
       ]
   }
+})
+$env.config.keybindings = ($env.config.keybindings | append {
+      name: another_esc_command
+      modifier: control
+      keycode: char_s
+      mode: [emacs, vi_normal, vi_insert]
+      event: { send: esc }
+})
+$env.config.keybindings = ($env.config.keybindings | append {
+      name: another_esc_command
+      modifier: control
+      keycode: char_s
+      mode: [emacs, vi_normal, vi_insert]
+      event: { mode: Vi_Normal }
 })
 $env._clipboard = ( try { $env._clipboard } catch { [ ] })
 
