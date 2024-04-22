@@ -995,8 +995,9 @@ def my-prompt [ ] {
 $env.PROMPT_COMMAND = {|| ([(my-prompt) $"($env.note?) (bg-running)" "\n" ->] | str join ' ') }
 $env.PROMPT_COMMAND_RIGHT = ""
 
-use kubernetes *
-use docker *
+use ($nu.default-config-dir | path join 'scripts' 'kubernetes') *
+use ($nu.default-config-dir | path join 'scripts' 'docker') *
+
 
 $env.config = ($env.config | upsert keybindings ( $env.config.keybindings | append [
   { name: custom modifier: alt keycode: char_h mode: [emacs vi_normal vi_insert]  event: { until: [
