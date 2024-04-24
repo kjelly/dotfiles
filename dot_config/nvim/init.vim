@@ -492,6 +492,10 @@ endif
 
 let $BROWSER='w3m'
 let $IN_VIM=1
+if has("nvr")
+  let $EDITOR="nvr"
+endif
+let $EDITOR="in_vim_editor"
 
 let g:test#strategy = "neovim" 
 let g:leetcode_solution_filetype='python3'
@@ -1324,3 +1328,5 @@ nnoremap <leader>cz <cmd>Zi<cr>
           \   },
           \   'cache_enabled': 1,
           \ }
+
+autocmd! BufWritePost /tmp/*.nu set bufhidden=delete

@@ -869,7 +869,8 @@ $env.config.cursor_shape.emacs = "block"
 $env.config.edit_mode = "emacs"
 $env.config.edit_mode = "vi"
 
-$env.EDITOR = nvim
+$env.EDITOR = "nvim"
+
 alias vim = nvim
 alias in = enter
 alias cd1 = cd ..
@@ -1781,4 +1782,8 @@ def "job add" [ command: any, --gid: string@complete-groups ] {
 
 def job [ ] {
   pueue status
+}
+
+if (($env.IN_VIM? == "1") and (which nvr | is-not-empty)) {
+  $env.EDITOR = [nvr --remote-wait-silent -cc vsplit]
 }
