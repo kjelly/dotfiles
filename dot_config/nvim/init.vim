@@ -526,6 +526,8 @@ augroup basic
   autocmd! TermOpen * setlocal nonu norelativenumber | setlocal signcolumn=no
   autocmd! WinLeave * call WinLeaveAction()
   autocmd! BufWritePost worksapce.vim source workspace.vim
+  autocmd! BufWritePost /tmp/*.nu setlocal bufhidden=delete
+  autocmd! BufRead /tmp/*.nu nnoremap <buffer> <c-s> <cmd>wq<cr> | inoremap <buffer> <c-s> <cmd>wq<cr> 
 
   au! BufRead */tasks/*.yaml,*/tasks/*.yml set ft=yaml.ansible
   au! BufRead *.yaml,*.yml if search('hosts:\|tasks:\|roles:', 'nw') | set ft=yaml.ansible | endif
@@ -1329,4 +1331,4 @@ nnoremap <leader>cz <cmd>Zi<cr>
           \   'cache_enabled': 1,
           \ }
 
-autocmd! BufWritePost /tmp/*.nu set bufhidden=delete
+
