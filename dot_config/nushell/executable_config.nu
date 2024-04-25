@@ -870,6 +870,7 @@ $env.config.edit_mode = "emacs"
 $env.config.edit_mode = "vi"
 
 $env.EDITOR = "nvim"
+$env.SHELL = nu
 
 alias vim = nvim
 alias in = enter
