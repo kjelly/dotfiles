@@ -1372,7 +1372,7 @@ $env.config = ($env.config | upsert completions  {
     external: {
       enable: true
       max_results: 100
-      completer: $carapace_completer
+      completer: $fish_with_carapace_completer
     }
 })
 
