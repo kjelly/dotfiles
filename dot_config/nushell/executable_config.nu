@@ -1,6 +1,6 @@
 # Nushell Config File
 #
-# version = "0.92.2"
+# version = "0.93.0"
 
 # For more information on defining custom themes, see
 # https://www.nushell.sh/book/coloring_and_theming.html
@@ -233,7 +233,7 @@ $env.config = {
     buffer_editor: "" # command that will be used to edit the current line buffer with ctrl+o, if unset fallback to $env.EDITOR and $env.VISUAL
     use_ansi_coloring: true
     bracketed_paste: true # enable bracketed paste, currently useless on windows
-    edit_mode: vi # emacs, vi
+    edit_mode: emacs # emacs, vi
     shell_integration: false # enables terminal shell integration. Off by default, as some terminals have issues with this.
     render_right_prompt_on_last_line: false # true or false to enable or disable right prompt to be rendered on last line of the prompt.
     use_kitty_protocol: false # enables keyboard enhancement protocol implemented by kitty console, only if your terminal support this.
@@ -867,9 +867,8 @@ $env.config = {
 $env.config.show_banner = false
 $env.config.cursor_shape.emacs = "block"
 $env.config.edit_mode = "emacs"
-$env.config.edit_mode = "vi"
 
-$env.EDITOR = "nvim"
+$env.EDITOR = nvim
 $env.SHELL = nu
 
 alias vim = nvim
@@ -1000,7 +999,6 @@ $env.PROMPT_COMMAND_RIGHT = ""
 use ($nu.default-config-dir | path join 'scripts' 'kubernetes') *
 use ($nu.default-config-dir | path join 'scripts' 'docker') *
 
-
 $env.config = ($env.config | upsert keybindings ( $env.config.keybindings | append [
   { name: custom modifier: alt keycode: char_h mode: [emacs vi_normal vi_insert]  event: { until: [
     { send: menuprevious }
@@ -1017,8 +1015,6 @@ $env.config = ($env.config | upsert keybindings ( $env.config.keybindings | appe
   { name: custom modifier: alt keycode: char_k mode: [emacs vi_normal vi_insert]  event: { until: [
     { send: menuup }
   ]}}
-  { name: custom modifier:control keycode: char_f mode: [emacs vi_normal vi_insert]  event: { send: HistoryHintComplete } }
-  { name: custom modifier:alt keycode: char_f mode: [emacs vi_normal vi_insert]  event: { send: HistoryHintWordComplete } }
   { name: custom modifier:alt keycode: char_q mode: [emacs vi_normal vi_insert]  event: [{edit: Clear}, {edit: InsertString, value: "workspace"}, {send: Enter}] }
 ]))
 
@@ -1192,8 +1188,7 @@ let repo_list = ["nushell/nushell", "casey/just", "ajeetdsouza/zoxide", "Ryooooo
  "xxxserxxx/gotop", "orhun/kmon", "browsh-org/browsh", "mrusme/planor", "jesseduffield/lazydocker",
  "tsenart/vegeta", "nicolas-van/multirun", "rsteube/carapace-bin", "urbanogilson/lineselect",
  "ast-grep/ast-grep", "jirutka/tty-copy", "theimpostor/osc", "d-kuro/kubectl-fuzzy",
- "nektos/act", "FiloSottile/age", "marcosnils/bin", "twpayne/chezmoi"
-
+ "nektos/act", "FiloSottile/age", "marcosnils/bin", "twpayne/chezmoi", "bitrise-io/envman", "guyfedwards/nom", "joshmedeski/sesh"
 ]
 
 def repo [ ] {
@@ -1234,8 +1229,10 @@ def download-github [ repo: string@repo ] {
   let repo = (real_repo $repo)
   let link_list = (github-link $repo | filter {|it| $it !~ '.*sha256'} )
   let link = ($link_list | get ($link_list | each {|it| $it |split row '/' | last} | input list --fuzzy --index)|str trim)
+
   let name = (http get $"https://api.github.com/repos/($repo)/releases/latest"|get assets |filter {$in.browser_download_url == $link } |get name|get 0)
   wget $link -O $name
+  rm -rf /tmp/aa
   mkdir /tmp/aa
   if ( $name | str ends-with '.gz' ) {
     tar zxvf $name -C /tmp/aa
@@ -1650,6 +1647,7 @@ $env.config.keybindings = ($env.config.keybindings | append {
       ]
   }
 })
+
 $env.config.keybindings = ($env.config.keybindings | append {
       name: another_esc_command
       modifier: control
@@ -1657,6 +1655,10 @@ $env.config.keybindings = ($env.config.keybindings | append {
       mode: [emacs, vi_normal, vi_insert]
       event: { send: esc }
 })
+
+if (($env.IN_VIM? == "1") and (which nvr | is-not-empty)) {
+  $env.EDITOR = [nvr --remote-wait-silent -cc vsplit]
+}
 $env._clipboard = ( try { $env._clipboard } catch { [ ] })
 
 def pretty [  ] {
@@ -1783,8 +1785,4 @@ def "job add" [ command: any, --gid: string@complete-groups ] {
 
 def job [ ] {
   pueue status
-}
-
-if (($env.IN_VIM? == "1") and (which nvr | is-not-empty)) {
-  $env.EDITOR = [nvr --remote-wait-silent -cc vsplit]
 }
