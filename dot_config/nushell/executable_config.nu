@@ -967,20 +967,7 @@ def "z-complete" [ context: string ] {
   $lst | uniq
 }
 
-def --env z [ arg0?:string@"z-complete", ...rest:string ] {
-  if ($arg0 == null ) {
-    cd
-    return
-  }
-  let path = if (($rest | length) <= 2) and ($arg0 == '-' or ($arg0 | path expand | path type) == dir) {
-    $arg0
-  } else {
-    (zoxide query --exclude $env.PWD -- $arg0 ...$rest | str trim -r -c "\n")
-  }
-  cd $path
-}
-
-def --env zi [...rest:string] {
+def --env z [...rest:string] {
   cd $'(zoxide query --interactive -- ...$rest | str trim -r -c "\n")'
 }
 
@@ -1189,6 +1176,7 @@ let repo_list = ["nushell/nushell", "casey/just", "ajeetdsouza/zoxide", "Ryooooo
  "tsenart/vegeta", "nicolas-van/multirun", "rsteube/carapace-bin", "urbanogilson/lineselect",
  "ast-grep/ast-grep", "jirutka/tty-copy", "theimpostor/osc", "d-kuro/kubectl-fuzzy",
  "nektos/act", "FiloSottile/age", "marcosnils/bin", "twpayne/chezmoi", "bitrise-io/envman", "guyfedwards/nom", "joshmedeski/sesh"
+ "itchyny/bed",
 ]
 
 def repo [ ] {
@@ -1337,17 +1325,31 @@ let zoxide_completer = {|spans|
 }
 
 let fish_with_carapace_completer = {|spans|
-  [
-    (
-      carapace $spans.0 nushell ...$spans | from json
-    ),
-    (
+  [{||
+    if (which carapace | is-not-empty ) {
+        carapace $spans.0 nushell ...$spans | from json
+    } else {
+      [ ]
+    }
+  },
+  {||
+    if (which fish | is-not-empty ) {
       fish --command $'complete "--do-complete=($spans | str join " ")"'
       | $"value(char tab)description(char newline)" + $in
       | from tsv --flexible --no-infer
-    )
-
-  ] | flatten | each {|it| $it | str trim } | uniq
+    } else {
+      [ ]
+    }
+  },
+  {||
+    if (which argc | is-not-empty ) {
+      argc --argc-compgen nushell "" ...$spans
+      | split row "\n" | range 0..-2
+      | each { |line| $line | split column "\t" value description } | flatten
+    } else {
+      [ ]
+    }
+  }] | par-each -t 8 {|it| do -i $it } | flatten | each {|it| $it | str trim } | uniq
 }
 
 let external_completer = {|spans|
@@ -1365,7 +1367,7 @@ $env.config = ($env.config | upsert completions  {
     case_sensitive: false
     quick: true
     partial: true
-    algorithm: "fuzzy"
+    algorithm: "prefix"
     external: {
       enable: true
       max_results: 100
@@ -1641,7 +1643,7 @@ $env.config.keybindings = ($env.config.keybindings | append {
   mode: [emacs vi_normal vi_insert]
   event: {
       until: [
-          { send: menu name: ide_completion_menu }
+          { send: menu name: completion_menu }
           { send: menunext }
           { edit: complete }
       ]
@@ -1786,3 +1788,25 @@ def "job add" [ command: any, --gid: string@complete-groups ] {
 def job [ ] {
   pueue status
 }
+def "nu-complete nur task-names" [] {
+  ^nur --list | lines
+}
+
+# nur - a taskrunner based on nu shell.
+export extern nur [
+  --help(-h)  # Display the help message for this command
+  --version(-v)  # Output version number and exit
+  --list(-l)  # List available tasks and then just exit
+  --quiet(-q)  # Do not output anything but what the task produces
+  --stdin  # Attach stdin to called nur task
+  --commands(-c)  # Run the given commands after nurfiles have been loaded
+  --enter-shell  # Enter a nu REPL shell after the nurfiles have been loaded (use only for debugging)
+  task_name?: string@"nu-complete nur task-names"  # Name of the task to run (optional)
+  ...args  # Parameters to the executed task
+]
+
+
+def "nu-complete t" [ ] {
+  tmux list-sessions -F '#S'|lines
+}
+export extern t [ session:string@"nu-complete t" ]
