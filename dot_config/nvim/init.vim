@@ -111,29 +111,24 @@ let g:loaded_ruby_provider = 0
 let g:loaded_node_provider = 0
 
 silent! call plug#begin('~/.config/nvim/plugged')
-Plug 'https://github.com/rebelot/terminal.nvim'
-Plug 'nanotee/zoxide.vim'
-Plug 'https://github.com/lewis6991/impatient.nvim'
+if executable("gcc")
 Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate all'}
 Plug 'https://github.com/danymat/neogen'
-Plug 'https://github.com/p00f/nvim-ts-rainbow'
 Plug 'mizlan/iswap.nvim'
 Plug 'nvim-treesitter/nvim-treesitter-textobjects'
 Plug 'https://github.com/theHamsta/nvim-treesitter-pairs'
 Plug 'romgrk/nvim-treesitter-context'
 Plug 'nvim-treesitter/playground'
 Plug 'nvim-treesitter/nvim-treesitter-refactor'
-Plug 'https://github.com/David-Kunz/treesitter-unit'
 "Yet another tree-sitter powered indent plugin for Neovim.
-Plug 'https://github.com/yioneko/nvim-yati'
-Plug 'SmiteshP/nvim-gps'
 Plug 'm-demare/hlargs.nvim'
 Plug 'https://github.com/kylechui/nvim-surround'
 Plug 'https://github.com/smjonas/live-command.nvim'
+" Plug 'https://github.com/LhKipp/nvim-nu', {'do': ':TSInstall nu'}
 Plug 'https://github.com/bennypowers/nvim-regexplainer'
-" Plug 'IndianBoy42/tree-sitter-just'
-Plug 'NoahTheDuke/vim-just'
+Plug 'IndianBoy42/tree-sitter-just'
 Plug 'https://github.com/nushell/tree-sitter-nu'
+endif
 
 " Seamlessly jump between matched instances.
 Plug 'kevinhwang91/nvim-hlslens', {'branch': 'main'}
@@ -143,18 +138,15 @@ Plug 'mfussenegger/nvim-dap-python'
 Plug 'rcarriga/nvim-dap-ui'
 " status line
 Plug 'https://github.com/nvim-lualine/lualine.nvim'
-" Plug 'https://github.com/fgheng/winbar.nvim'
 
 " A search panel for neovim.
 Plug 'nvim-lua/popup.nvim'
 Plug 'nvim-lua/plenary.nvim'
-Plug 'nvim-telescope/telescope.nvim', { 'tag': '*' }
-Plug 'dawsers/telescope-floaterm.nvim'
-Plug 'https://github.com/Marskey/telescope-sg'
-Plug 'arjunmahishi/k8s.nvim'
-Plug 'frenchtoasters/telescope-kubectl.nvim'
+Plug 'nvim-telescope/telescope.nvim', { 'tag': '0.1.8' }
+Plug 'https://github.com/nvim-telescope/telescope-frecency.nvim'
 Plug 'kkharji/sqlite.lua'
 
+Plug 'nanotee/zoxide.vim'
 
 Plug 'windwp/nvim-spectre'
 Plug 'https://github.com/sindrets/diffview.nvim'
@@ -168,25 +160,19 @@ Plug 'kyazdani42/nvim-tree.lua'
 Plug 'MunifTanjim/nui.nvim'
 Plug 'https://github.com/nvim-neo-tree/neo-tree.nvim', {'tag': '*'}
 Plug 'https://github.com/folke/noice.nvim', {'tag': '*'}
-" Plug 'https://github.com/miversen33/netman.nvim/', {'branch': 'main'}
 
 " Change cursor based on mode
 Plug 'https://github.com/melkster/modicator.nvim'
 
-Plug 'https://github.com/akinsho/toggleterm.nvim', {'tag': '*'}
-
 " Indent guides for Neovim
 Plug 'https://github.com/lukas-reineke/indent-blankline.nvim', {'branch': 'master', 'on': 'IndentBlanklineEnable'}
-Plug 'https://github.com/tveskag/nvim-blame-line'
+Plug 'https://github.com/f-person/git-blame.nvim'
 
 " Due date
 Plug 'NFrid/due.nvim'
 
-" Comment
-Plug 'https://github.com/numToStr/Comment.nvim'
-
 Plug 'https://github.com/folke/which-key.nvim'
-Plug 'https://github.com/romainl/vim-cool'
+Plug 'https://github.com/romainl/vim-cool' " show hightlight in search mode
 
 Plug 'kevinhwang91/promise-async'
 
@@ -205,31 +191,22 @@ Plug 'rcarriga/nvim-notify'
 " Plug 'https://github.com/petertriho/nvim-scrollbar'
 Plug 'https://github.com/Chaitanyabsprip/present.nvim'
 
-Plug 'https://github.com/ojroques/nvim-osc52'
-
 Plug 'jdhao/better-escape.vim'
 
 Plug 'williamboman/mason.nvim'
 Plug 'williamboman/mason-lspconfig.nvim'
 Plug 'neovim/nvim-lspconfig'
 Plug 'nvim-tree/nvim-web-devicons'
-" Plug 'https://github.com/glepnir/lspsaga.nvim'
-" Plug 'https://git.sr.ht/~whynothugo/lsp_lines.nvim'
-Plug 'kosayoda/nvim-lightbulb'
-Plug 'nanotee/sqls.nvim'
-"kevinhwang91/promise-async Plug 'jubnzv/virtual-types.nvim'
-Plug 'https://github.com/simrat39/symbols-outline.nvim'
-Plug 'https://github.com/folke/lsp-colors.nvim'
-" Plug 'https://github.com/RRethy/vim-illuminate'
-" Plug 'https://github.com/nvimtools/none-ls.nvim'
+Plug 'https://github.com/glepnir/lspsaga.nvim'
+" Plug 'jubnzv/virtual-types.nvim'
+Plug 'https://github.com/hedyhli/outline.nvim'
 
 Plug 'stevearc/conform.nvim'
 
-Plug 'https://github.com/dstein64/vim-startuptime'
 Plug 'folke/persistence.nvim'
 
 if empty($SSH_CLIENT)
-  Plug 'blueyed/vim-diminactive' " use different background color for inactive window
+  " Plug 'blueyed/vim-diminactive' " use different background color for inactive window
 else
 endif
 
@@ -238,16 +215,9 @@ Plug 'https://github.com/nyngwang/NeoZoom.lua'
 " Markdown table formaater
 Plug 'https://github.com/junegunn/vim-easy-align'
 
-" Emoji"
-Plug 'yazgoo/unicodemoji'
-
 " Git
-Plug 'https://github.com/lambdalisue/gina.vim'
+"Plug 'https://github.com/lambdalisue/gina.vim'
 Plug 'https://github.com/akinsho/git-conflict.nvim'
-
-" DB
-Plug 'tpope/vim-dadbod', { 'on': ['DB']}
-Plug 'kristijanhusak/vim-dadbod-ui', { 'on': ['DB']}
 
 Plug 'https://github.com/kjelly/kube-nvim'
 Plug 'voldikss/vim-floaterm'
@@ -258,14 +228,10 @@ Plug 'AndrewRadev/switch.vim'
 " An always-on highlight for a unique character in every word on a line
 " to help you use f, F and family.
 Plug 'unblevable/quick-scope'
-Plug 'itchyny/calendar.vim', { 'on': 'Calendar'}
-Plug 'vimwiki/vimwiki', { 'on': 'VimwikiIndex' }
-Plug 'https://github.com/nvim-neotest/neotest'
 
 Plug 'simeji/winresizer', { 'on': ['WinResizerStartResize', 'WinResizerStartMove']}
-Plug 't9md/vim-choosewin'
-Plug 'metakirby5/codi.vim'
 Plug 'https://github.com/NvChad/nvim-colorizer.lua'
+
 " Plug 'Shougo/vimproc.vim', {'do' : 'make'}
 
 " Plug 'https://github.com/NTBBloodbath/rest.nvim'
@@ -280,15 +246,12 @@ Plug 'https://codeberg.org/esensar/nvim-dev-container'
 " :w suda://%
 Plug 'lambdalisue/suda.vim', {'on': ['SudaRead', 'SudaWrite']}
 
-" sudo pip3 install keyring browser-cookie3
-Plug 'ianding1/leetcode.vim'
+Plug 'https://github.com/kawre/leetcode.nvim'
 
 Plug 'https://github.com/m-gail/escape.nvim'
 
 " colorscheme foramework
 Plug 'rktjmp/lush.nvim'
-
-Plug 'https://github.com/Zeioth/compiler.nvim'
 
 " colorscheme
 Plug 'sainnhe/gruvbox-material'
@@ -329,14 +292,8 @@ Plug 'https://github.com/cranberry-clockworks/coal.nvim'
 " file explorer for ssh
 Plug 'https://github.com/stevearc/oil.nvim'
 
-if executable("fcitx") == 1
-  Plug 'vim-scripts/fcitx.vim'
-endif
-
-
-Plug 'tpope/vim-fugitive'
-Plug 'cohama/agit.vim', { 'on':  ['Agit', 'AgitFile'] }
-if executable("gh")
+Plug 'tpope/vim-fugitive' " for git
+if executable("gh") == 1
   Plug 'https://github.com/pwntester/octo.nvim'
 endif
 
@@ -347,12 +304,9 @@ Plug 'mbbill/undotree', { 'on': ['UndotreeToggle']}
 Plug 'https://github.com/chentoast/marks.nvim'
 
 
-if has('python3')
-  Plug 'vim-vdebug/vdebug', { 'on': 'VdebugStart'}
-endif
-
 Plug 'https://github.com/zbirenbaum/copilot.lua'
 Plug 'https://github.com/zbirenbaum/copilot-cmp'
+Plug 'https://github.com/CopilotC-Nvim/CopilotChat.nvim'
 
 Plug 'hrsh7th/cmp-nvim-lsp'
 Plug 'hrsh7th/cmp-buffer'
@@ -360,21 +314,20 @@ Plug 'hrsh7th/cmp-path'
 Plug 'hrsh7th/cmp-cmdline'
 Plug 'hrsh7th/nvim-cmp'
 Plug 'lukas-reineke/cmp-rg'
+Plug 'https://github.com/petertriho/cmp-git'
 Plug 'https://github.com/mtoohey31/cmp-fish', { 'for': 'fish'}
-Plug 'https://github.com/dmitmel/cmp-cmdline-history'
-Plug 'https://github.com/hrsh7th/cmp-nvim-lsp-document-symbol'
+Plug 'https://github.com/hrsh7th/cmp-nvim-lsp-document-symbol'  "use /@
 Plug 'ray-x/lsp_signature.nvim'
 Plug 'saadparwaiz1/cmp_luasnip'
 
-Plug 'https://github.com/windwp/nvim-autopairs'
+"Plug 'https://github.com/windwp/nvim-autopairs'
 Plug 'rafamadriz/friendly-snippets'
 Plug 'https://github.com/L3MON4D3/LuaSnip'
-" Plug 'tzachar/cmp-tabnine', { 'do': './install.sh' }
-" Plug 'https://github.com/hrsh7th/cmp-copilot'
-Plug 'https://github.com/gfanto/fzf-lsp.nvim'
+"Plug 'tzachar/cmp-tabnine', { 'do': './install.sh' }
+Plug 'https://github.com/ojroques/nvim-lspfuzzy'
 Plug 'https://github.com/stevearc/aerial.nvim'
 Plug 'https://github.com/onsails/lspkind.nvim'
-Plug 'https://github.com/gaoDean/autolist.nvim'
+Plug 'https://github.com/gaoDean/autolist.nvim' " for markdown
 Plug 'https://github.com/gbrlsnchs/winpick.nvim'
 
 
@@ -473,10 +426,12 @@ set sessionoptions=buffers,curdir,tabpages,winsize,globals
 " suppress the annoying 'match x of y', 'The only match' and 'Pattern not
 " found' messages
 " or don't give |ins-completion-menu| messages.
-set shortmess=sTWAIF
+set shortmess=sTWAIFS
 " always show signcolumns
 set signcolumn=yes
 set noshowmode
+set spell
+set spelloptions=camel
 set inccommand=split
 set winblend=0
 set pumblend=0
@@ -492,10 +447,6 @@ endif
 
 let $BROWSER='w3m'
 let $IN_VIM=1
-if has("nvr")
-  let $EDITOR="nvr"
-endif
-let $EDITOR="in_vim_editor"
 
 let g:test#strategy = "neovim" 
 let g:leetcode_solution_filetype='python3'
@@ -526,7 +477,7 @@ augroup basic
   autocmd! TermOpen * setlocal nonu norelativenumber | setlocal signcolumn=no
   autocmd! WinLeave * call WinLeaveAction()
   autocmd! BufWritePost worksapce.vim source workspace.vim
-  autocmd! BufWritePost /tmp/*.nu setlocal bufhidden=delete
+  autocmd! BufWritePost /tmp/*.nu set bufhidden=delete
   autocmd! BufRead /tmp/*.nu nnoremap <buffer> <c-s> <cmd>wq<cr> | inoremap <buffer> <c-s> <cmd>wq<cr> 
 
   au! BufRead */tasks/*.yaml,*/tasks/*.yml set ft=yaml.ansible
@@ -670,7 +621,7 @@ nnoremap <m-s> <cmd>lua SymbolToggle()<cr>
 " save
 nnoremap <c-s> <cmd>w<cr>
 inoremap <c-s> <cmd>w<cr><esc>
-" tnoremap <c-s> <C-\><C-n> " exit terminal
+tnoremap <c-s> <C-\><C-n> " exit terminal
 
 inoremap <expr> <Esc>      pumvisible() ? "\<C-e>" : "\<Esc>"
 inoremap <expr> <Down>     pumvisible() ? "\<C-n>" : "\<Down>"
@@ -687,7 +638,7 @@ imap <c-x><c-l> <plug>(fzf-complete-line)
 cnoremap <c-s> Explore scp://
 
 
-" tnoremap <c-]> <cmd>stopinsert<cr>
+tnoremap <c-]> <cmd>stopinsert<cr>
 
 inoremap <c-]> <Esc>
 vnoremap <c-]> <Esc>
@@ -946,11 +897,10 @@ nnoremap <silent> <leader>zr <cmd>FzfLua live_grep<cr>
 
 xmap ga <Plug>(EasyAlign)
 
-nnoremap <silent> <leader>gag <cmd>Agit<CR>
 nnoremap <silent> <leader>gam <cmd>FloatermNew git commit --amend<CR>
 nnoremap <silent> <leader>gbl <cmd>Git blame<CR>
 nnoremap <silent> <leader>gbr <cmd>FzfLua git_branches<cr>
-nnoremap <silent> <leader>gc <cmd>FloatermNew git commit<CR>
+nnoremap <silent> <leader>gc <cmd>FloatermNew git commit -S<CR>
 nnoremap <silent> <leader>gdc <cmd>Git diff %<CR>
 nnoremap <silent> <leader>gdi <cmd>Git diff<CR>
 nnoremap <silent> <leader>gdl <cmd>Git diff @~..@<CR>
@@ -968,7 +918,11 @@ nnoremap <silent> <leader>gs <cmd>FzfLua git_status<cr>
 nnoremap <silent> <leader>gu <cmd>Git pull --rebase<CR>
 nnoremap <silent> <leader>gw <cmd>Gwrite<CR>
 nnoremap <silent> <leader>ggpl <cmd>Octo pr list<cr>
-
+nnoremap <silent> <leader>ggpc <cmd>Octo pr create<cr>
+nnoremap <silent> <leader>ggpm <cmd>Octo pr merge<cr>
+nnoremap <silent> <leader>ggpe <cmd>Octo pr edit<cr>
+nnoremap <silent> <leader>ggpu <cmd>Octo pr url<cr>
+nnoremap <silent> <leader>ggpo <cmd>Octo pr checkout<cr>
 
 nnoremap <silent> <leader>id :put =strftime('%Y-%m-%d')<cr>
 nnoremap <silent> <leader>it :put =strftime('%H:%M:%S')<cr>
@@ -983,6 +937,7 @@ function TabCD()
 endfunction
 nnoremap <Leader>cd :call TabCD()<cr>
 nnoremap <leader>cc :lua RunShellAndShow('')<left><left>
+nnoremap <leader>cz <cmd>Zi<cr>
 "nnoremap <leader>co  " for rnadom colorscheme
 
 nnoremap <leader>fx :Explore<space>
@@ -1026,6 +981,7 @@ nnoremap <silent> <leader>qw :q<cr>
 nnoremap <silent> <leader>qb :Bclose<cr>
 nnoremap <silent> <leader>qt :tabclose<cr>
 nnoremap <silent> <leader>qa :qa!<cr>
+nnoremap <silent> <leader>qx <cmd>bufdo bd<cr>
 nnoremap <silent> <leader>qs <cmd>lua require("persistence").load()<cr>
 
 " State / Switch
@@ -1189,9 +1145,11 @@ nnoremap <silent> <leader>lts :TestSuite<cr>
 nnoremap <silent> <leader>ltv :TestVisit<cr>
 nnoremap <leader>lg <cmd>Neogen<cr>
 
-nnoremap <silent> <leader>lel :LeetCodeList<cr>
-nnoremap <silent> <leader>les :LeetCodeSubmit<cr>
-nnoremap <silent> <leader>let :LeetCodeTest<cr>
+nnoremap <silent> <leader>lel :Leet list<cr>
+nnoremap <silent> <leader>les :Leet submit<cr>
+nnoremap <silent> <leader>let :Leet test<cr>
+nnoremap <silent> <leader>led :Leet daily<cr>
+nnoremap <silent> <leader>lem :Leet<cr>
 
 nnoremap <silent> <localleader>dt <cmd>lua require'dap'.toggle_breakpoint()<cr>
 nnoremap <silent> <localleader>dc <cmd>lua require'dap'.continue()<cr>
@@ -1212,7 +1170,8 @@ nnoremap <silent> <localleader>l :wincmd l<cr>
 nnoremap <silent> <localleader>y <cmd>lua GoToMainWindowAndRunCommand("FzfLua jumps")<cr>
 nnoremap <silent> <localleader>o <cmd>lua GoToMainWindowAndRunCommand("FzfLua buffers")<cr>
 nnoremap <silent> <localleader>p <cmd>lua FindFileCwd()<cr>
-nnoremap <silent> <localleader>q :q!<cr>
+nnoremap <silent> <localleader>qq :q!<cr>
+nnoremap <silent> <localleader>qs :wq!<cr>
 nnoremap <silent> <localleader>n <cmd>call TreeToggle()<cr>
 nnoremap <silent> <localleader>tt <cmd>lua TermToggle()<cr>
 nnoremap <silent> <localleader>tj <cmd>lua FloatermNext(1)<cr>
@@ -1220,10 +1179,9 @@ nnoremap <silent> <localleader>tk <cmd>lua FloatermNext(-1)<cr>
 nnoremap <silent> <localleader>tn <cmd>FloatermNew<cr>
 nnoremap <silent> <localleader>rp <cmd>lua RunPreviousCommandFunc()<cr>
 nnoremap <silent> <localleader>; <cmd>lua TermToggle()<cr>
-nnoremap <silent> <localleader>tj i<up><esc>
-nnoremap <silent> <localleader>tk <cmd>lua FloatermNext(1)<cr>
 nnoremap <silent> <localleader>' <cmd>lua FloatermNext(1)<cr>
 nnoremap <localleader>rr :lua KillAndRerunTermWrapper('')<left><left>
+nnoremap <localleader>rn <cmd>exec 'FloatermNew --autoclose=1 '. getline('.')<cr>
 nnoremap <localleader>re :lua KillAndRerunTermWrapper<up>
 nnoremap <localleader>e <cmd>lua RunBuffer()<cr>
 
@@ -1285,7 +1243,6 @@ let g:mkdx#settings = { 'map': { 'enable': 1, 'prefix': '<leader>md' }, 'checkbo
 
 set title
 
-
 if has("nvim-0.9.0")
   set splitkeep=screen
 endif
@@ -1316,19 +1273,6 @@ highlight! link HopNextKey2 Error
 highlight! link WinSeparator Boolean
 
 
-nnoremap <leader>cz <cmd>Zi<cr>
-
-    let g:clipboard = {
-          \   'name': 'myClipboard',
-          \   'copy': {
-          \      '+': ['tmux', 'load-buffer', '-'],
-          \      '*': ['tmux', 'load-buffer', '-'],
-          \    },
-          \   'paste': {
-          \      '+': ['tmux', 'save-buffer', '-'],
-          \      '*': ['tmux', 'save-buffer', '-'],
-          \   },
-          \   'cache_enabled': 1,
-          \ }
-
-
+noremap <subleader> <Nop>
+map . <Subleader>
+nnoremap <subleader>a <cmd>ls<cr>

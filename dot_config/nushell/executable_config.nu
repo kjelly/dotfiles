@@ -1,6 +1,6 @@
 # Nushell Config File
 #
-# version = "0.93.0"
+# version = "0.94.2"
 
 # For more information on defining custom themes, see
 # https://www.nushell.sh/book/coloring_and_theming.html
@@ -69,6 +69,7 @@ let dark_theme = {
     shape_table: blue_bold
     shape_variable: purple
     shape_vardecl: purple
+    shape_raw_string: light_purple
 }
 
 let light_theme = {
@@ -134,6 +135,7 @@ let light_theme = {
     shape_table: blue_bold
     shape_variable: purple
     shape_vardecl: purple
+    shape_raw_string: light_purple
 }
 
 # External completer example
@@ -234,7 +236,34 @@ $env.config = {
     use_ansi_coloring: true
     bracketed_paste: true # enable bracketed paste, currently useless on windows
     edit_mode: emacs # emacs, vi
-    shell_integration: false # enables terminal shell integration. Off by default, as some terminals have issues with this.
+    shell_integration: {
+        # osc2 abbreviates the path if in the home_dir, sets the tab/window title, shows the running command in the tab/window title
+        osc2: true
+        # osc7 is a way to communicate the path to the terminal, this is helpful for spawning new tabs in the same directory
+        osc7: true
+        # osc8 is also implemented as the deprecated setting ls.show_clickable_links, it shows clickable links in ls output if your terminal supports it. show_clickable_links is deprecated in favor of osc8
+        osc8: true
+        # osc9_9 is from ConEmu and is starting to get wider support. It's similar to osc7 in that it communicates the path to the terminal
+        osc9_9: false
+        # osc133 is several escapes invented by Final Term which include the supported ones below.
+        # 133;A - Mark prompt start
+        # 133;B - Mark prompt end
+        # 133;C - Mark pre-execution
+        # 133;D;exit - Mark execution finished with exit code
+        # This is used to enable terminals to know where the prompt is, the command is, where the command finishes, and where the output of the command is
+        osc133: true
+        # osc633 is closely related to osc133 but only exists in visual studio code (vscode) and supports their shell integration features
+        # 633;A - Mark prompt start
+        # 633;B - Mark prompt end
+        # 633;C - Mark pre-execution
+        # 633;D;exit - Mark execution finished with exit code
+        # 633;E - NOT IMPLEMENTED - Explicitly set the command line with an optional nonce
+        # 633;P;Cwd=<path> - Mark the current working directory and communicate it to the terminal
+        # and also helps with the run recent menu in vscode
+        osc633: true
+        # reset_application_mode is escape \x1b[?1l and was added to help ssh work better
+        reset_application_mode: true
+    }
     render_right_prompt_on_last_line: false # true or false to enable or disable right prompt to be rendered on last line of the prompt.
     use_kitty_protocol: false # enables keyboard enhancement protocol implemented by kitty console, only if your terminal support this.
     highlight_resolved_externals: false # true enables highlighting of external commands in the repl resolved by which.
@@ -1333,6 +1362,7 @@ let fish_with_carapace_completer = {|spans|
     }
   },
   {||
+    # for local file
     if (which fish | is-not-empty ) {
       fish --command $'complete "--do-complete=($spans | str join " ")"'
       | $"value(char tab)description(char newline)" + $in
@@ -1356,6 +1386,8 @@ let external_completer = {|spans|
     match $spans.0 {
         nu => $fish_completer
         git => $fish_completer
+        vim => $fish_completer
+        nvim => $fish_completer
         asdf => $fish_completer
         z => $zoxide_completer
         zi => $zoxide_completer
@@ -1371,7 +1403,7 @@ $env.config = ($env.config | upsert completions  {
     external: {
       enable: true
       max_results: 100
-      completer: $fish_with_carapace_completer
+      completer: $external_completer
     }
 })
 
@@ -1661,6 +1693,16 @@ $env.config.keybindings = ($env.config.keybindings | append {
 if (($env.IN_VIM? == "1") and (which nvr | is-not-empty)) {
   $env.EDITOR = [nvr --remote-wait-silent -cc vsplit]
 }
+
+def "nu-complete t" [ ] {
+  tmux list-sessions -F '#S'|lines
+}
+export extern t [ sessions:string@"nu-complete t" ]
+
+def --wrapped bg [ ...command  ] {
+  tmux new-window -c . -t popup: -d ...$command
+}
+
 $env._clipboard = ( try { $env._clipboard } catch { [ ] })
 
 def pretty [  ] {
@@ -1728,6 +1770,7 @@ def fzf_list [ ] {
     ($it.index == $selectedIndex)
   } | get 0 |get value
 }
+
 def parse-status [ value ] {
   print $value
   try {
@@ -1788,6 +1831,7 @@ def "job add" [ command: any, --gid: string@complete-groups ] {
 def job [ ] {
   pueue status
 }
+
 def "nu-complete nur task-names" [] {
   ^nur --list | lines
 }
@@ -1805,12 +1849,4 @@ export extern nur [
   ...args  # Parameters to the executed task
 ]
 
-
-def "nu-complete t" [ ] {
-  tmux list-sessions -F '#S'|lines
-}
-export extern t [ session:string@"nu-complete t" ]
-
-def --wrapped bg [ ...command  ] {
-  tmux new-window -c . -t popup: -d ...$command
-}
+use ($nu.default-config-dir | path join 'scripts' 'pueue.nu') *
