@@ -1000,6 +1000,23 @@ def --env z [...rest:string] {
   cd $'(zoxide query --interactive -- ...$rest | str trim -r -c "\n")'
 }
 
+def --env zl [ ] {
+  cd (zoxide query -l|lines|filter {|it| $it starts-with (pwd)}|each {|it| $it | str replace (pwd) '.'}|input list --fuzzy)
+}
+
+def --env gg [ ] {
+  mut p = (pwd)
+  while ($p != "/") {
+    if ($p | path join ".git"|path exists) {
+      break
+    }
+    $p = ($p | path join ".."|path expand)
+  }
+  if ($p != "/") {
+    cd $p
+  }
+}
+
 def my-prompt [ ] {
   try {
     return (starship prompt)
@@ -1032,6 +1049,17 @@ $env.config = ($env.config | upsert keybindings ( $env.config.keybindings | appe
     { send: menuup }
   ]}}
   { name: custom modifier:alt keycode: char_q mode: [emacs vi_normal vi_insert]  event: [{edit: Clear}, {edit: InsertString, value: "workspace"}, {send: Enter}] }
+  {
+      name: "Run zoxide"
+      modifier: Alt
+      keycode: char_c
+      mode: [emacs, vi_normal, vi_insert]
+      event: {
+        send: executehostcommand,
+        cmd: "zl"
+      }
+  }
+
 ]))
 
 
@@ -1243,6 +1271,8 @@ def github-link [context: string] {
 }
 
 def download-github [ repo: string@repo ] {
+  let tmpdir = (mktemp -t -d download-github.XXXXX)
+  cd $tmpdir
   let repo = (real_repo $repo)
   let link_list = (github-link $repo | filter {|it| $it !~ '.*sha256'} )
   let link = ($link_list | get ($link_list | each {|it| $it |split row '/' | last} | input list --fuzzy --index)|str trim)
@@ -1701,6 +1731,45 @@ export extern t [ sessions:string@"nu-complete t" ]
 
 def --wrapped bg [ ...command  ] {
   tmux new-window -c . -t popup: -d ...$command
+}
+
+def kaniko-build [ dockerfile: string, context: string, image: string, ...args:string  ] {
+  let build_args = ($args | each {|it| ["--build-arg",  $it]}|flatten)
+  let dct = {
+    "apiVersion": "v1",
+    "spec": {
+      "containers": [
+        {
+          "name": "kaniko",
+          "image": "gcr.io/kaniko-project/executor:latest",
+          "stdin": true,
+          "stdinOnce": true,
+          "args": [
+            "--dockerfile=Dockerfile",
+            "--context=tar://stdin",
+            "--cache-dir=/workspace/cache",
+            $"--destination=($image)",
+            ...$build_args
+          ],
+          "volumeMounts": [
+            {
+              "name": "docker-config",
+              "mountPath": "/kaniko/.docker/"
+            }
+          ]
+        }
+      ],
+      "volumes": [
+        {
+          "name": "docker-config",
+          "configMap": {
+            "name": "docker-config"
+          }
+        }
+      ]
+    }
+  }
+  tar zcvf - $context | kubectl run kaniko --rm --stdin=true --image=gcr.io/kaniko-project/executor:latest --restart=Never $"--overrides=($dct|to json --raw|str trim)"
 }
 
 $env._clipboard = ( try { $env._clipboard } catch { [ ] })
