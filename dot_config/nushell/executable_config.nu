@@ -900,7 +900,6 @@ $env.config.edit_mode = "emacs"
 $env.EDITOR = nvim
 $env.SHELL = nu
 
-alias vim = nvim
 alias in = enter
 alias cd1 = cd ..
 alias cd2 = cd ../../
@@ -1433,7 +1432,7 @@ $env.config = ($env.config | upsert completions  {
     external: {
       enable: true
       max_results: 100
-      completer: $external_completer
+      completer: $fish_with_carapace_completer
     }
 })
 
@@ -1919,3 +1918,24 @@ export extern nur [
 ]
 
 use ($nu.default-config-dir | path join 'scripts' 'pueue.nu') *
+
+def r [ task:string@"nu-complete nur task-names" ] {
+  let code = "import os\nos.system('nur " + $task + "')"
+  echo $code|python3
+}
+
+def fzf-with-cache [ key:string ] {
+  let data = $in | into string
+  let table = $"fzf_cache_($key)"
+  do -i { stor create -t $table -c {value: str, time: datetime} }
+  let cache = (stor open | query db $"SELECT * FROM ($table) order by time DESC"|get value)
+  print $cache
+  let data = $data + ($cache|get value| str join "\n")
+  let response = ($data | ^fzf --scheme=history --print-query|lines)
+  if ($response | is-empty) {
+    return
+  }
+  let ret = ($response | last)
+  stor insert -t $table -d { value: $ret, time: (date now)}
+  $ret
+}
