@@ -1,6 +1,6 @@
 # Nushell Config File
 #
-# version = "0.94.2"
+# version = "0.95.0"
 
 # For more information on defining custom themes, see
 # https://www.nushell.sh/book/coloring_and_theming.html
@@ -48,6 +48,7 @@ let dark_theme = {
     shape_float: purple_bold
     # shapes are used to change the cli syntax highlighting
     shape_garbage: { fg: white bg: red attr: b}
+    shape_glob_interpolation: cyan_bold
     shape_globpattern: cyan_bold
     shape_int: purple_bold
     shape_internalcall: cyan_bold
@@ -189,12 +190,7 @@ $env.config = {
             warn: {}
             info: {}
         },
-        table: {
-            split_line: { fg: "#404040" },
-            selected_cell: { bg: light_blue },
-            selected_row: {},
-            selected_column: {},
-        },
+        selected_cell: { bg: light_blue },
     }
 
     history: {
@@ -900,6 +896,7 @@ $env.config.edit_mode = "emacs"
 $env.EDITOR = nvim
 $env.SHELL = nu
 
+alias vim = nvim
 alias in = enter
 alias cd1 = cd ..
 alias cd2 = cd ../../
@@ -963,19 +960,6 @@ def vim [...file: string] {
   } else {
     /usr/bin/vim ...$af
   }
-}
-
-def fzf [ ] {
-  let stdin = $in
-  let a = ($stdin | detect columns)
-  let start = (if ( $a | is-empty ) {
-    $stdin
-  } else {
-    $a
-  })
-  let userSelect = (($start | par-each -t 8 {|it| $it|to nuon }|str join "\n" |^fzf) | str trim)
-  echo $userSelect
-  $userSelect | from nuon
 }
 
 def "z-complete" [ context: string ] {
@@ -1771,6 +1755,12 @@ def kaniko-build [ dockerfile: string, context: string, image: string, ...args:s
   tar zcvf - $context | kubectl run kaniko --rm --stdin=true --image=gcr.io/kaniko-project/executor:latest --restart=Never $"--overrides=($dct|to json --raw|str trim)"
 }
 
+def r [ task:string@"nu-complete nur task-names" ] {
+  let code = "import os\nos.system('nur " + $task + "')"
+  python3 -c $code
+
+}
+
 $env._clipboard = ( try { $env._clipboard } catch { [ ] })
 
 def pretty [  ] {
@@ -1918,24 +1908,3 @@ export extern nur [
 ]
 
 use ($nu.default-config-dir | path join 'scripts' 'pueue.nu') *
-
-def r [ task:string@"nu-complete nur task-names" ] {
-  let code = "import os\nos.system('nur " + $task + "')"
-  echo $code|python3
-}
-
-def fzf-with-cache [ key:string ] {
-  let data = $in | into string
-  let table = $"fzf_cache_($key)"
-  do -i { stor create -t $table -c {value: str, time: datetime} }
-  let cache = (stor open | query db $"SELECT * FROM ($table) order by time DESC"|get value)
-  print $cache
-  let data = $data + ($cache|get value| str join "\n")
-  let response = ($data | ^fzf --scheme=history --print-query|lines)
-  if ($response | is-empty) {
-    return
-  }
-  let ret = ($response | last)
-  stor insert -t $table -d { value: $ret, time: (date now)}
-  $ret
-}
