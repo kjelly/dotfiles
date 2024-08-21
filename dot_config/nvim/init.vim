@@ -200,6 +200,7 @@ Plug 'nvim-tree/nvim-web-devicons'
 Plug 'https://github.com/glepnir/lspsaga.nvim'
 " Plug 'jubnzv/virtual-types.nvim'
 Plug 'https://github.com/hedyhli/outline.nvim'
+Plug 'zeioth/garbage-day.nvim'
 
 Plug 'stevearc/conform.nvim'
 
@@ -254,6 +255,7 @@ Plug 'https://github.com/m-gail/escape.nvim'
 Plug 'rktjmp/lush.nvim'
 
 " colorscheme
+Plug 'catppuccin/nvim', { 'as': 'catppuccin' }
 Plug 'sainnhe/gruvbox-material'
 Plug 'gruvbox-community/gruvbox'
 Plug 'folke/tokyonight.nvim'
@@ -302,6 +304,9 @@ Plug 'mbbill/undotree', { 'on': ['UndotreeToggle']}
 " Bookmarks and marks
 " Disable this to use float floaterm.
 Plug 'https://github.com/chentoast/marks.nvim'
+
+" AI
+Plug 'https://github.com/kiddos/gemini.nvim'
 
 
 Plug 'https://github.com/zbirenbaum/copilot.lua'

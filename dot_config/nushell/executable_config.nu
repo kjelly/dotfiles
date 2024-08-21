@@ -893,8 +893,8 @@ $env.config.show_banner = false
 $env.config.cursor_shape.emacs = "block"
 $env.config.edit_mode = "emacs"
 
-$env.EDITOR = nvim
-$env.SHELL = nu
+$env.EDITOR = "nvim"
+$env.SHELL = "nu"
 
 alias in = enter
 alias cd1 = cd ..
@@ -1366,19 +1366,13 @@ let zoxide_completer = {|spans|
 }
 
 let fish_with_carapace_completer = {|spans|
-  [{||
+  let last_part = ($spans|last)
+  if ([./ ~/ ../]|each {|it| $last_part starts-with $it}|reduce {|a, b| $a or $b}) {
+    return null
+  } 
+  let ret = ([{||
     if (which carapace | is-not-empty ) {
         carapace $spans.0 nushell ...$spans | from json
-    } else {
-      [ ]
-    }
-  },
-  {||
-    # for local file
-    if (which fish | is-not-empty ) {
-      fish --command $'complete "--do-complete=($spans | str join " ")"'
-      | $"value(char tab)description(char newline)" + $in
-      | from tsv --flexible --no-infer
     } else {
       [ ]
     }
@@ -1391,8 +1385,13 @@ let fish_with_carapace_completer = {|spans|
     } else {
       [ ]
     }
-  }] | par-each -t 8 {|it| do -i $it } | flatten | each {|it| $it | str trim } | uniq
+  }] | par-each -t 8 {|it| do -i $it } | flatten | each {|it| $it | str trim } | uniq)
+  if ($ret | is-empty) {
+    return null
+  } 
+  $ret
 }
+
 
 let external_completer = {|spans|
     match $spans.0 {
@@ -1687,7 +1686,7 @@ $env.config.keybindings = ($env.config.keybindings | append {
   mode: [emacs vi_normal vi_insert]
   event: {
       until: [
-          { send: menu name: completion_menu }
+          { send: menu name: ide_completion_menu }
           { send: menunext }
           { edit: complete }
       ]

@@ -120,9 +120,9 @@ function DefaultTable(a, b)
 end
 
 local langservers = {
-  'ansiblels', 'bashls', 'cssls', 'dartls', 'dockerls', 'efm', 'emmet_ls',
+  'dartls', 'dockerls', 'efm', 'emmet_ls',
   'gopls', 'graphql', 'html', 'jsonls', 'marksman', 'pyright', 'rust_analyzer',
-  'sqlls', 'terraformls', 'tsserver', 'vimls', 'yamlls', 'ruff_lsp',
+  'sqlls', 'terraformls', 'tsserver', 'vimls', 'ruff_lsp', 'lua_ls'
 }
 
 for _, v in ipairs({ "node", "go" }) do
@@ -1042,21 +1042,22 @@ function UpdateEnv()
 end
 
 function DelaySetup2()
+  SafeRequire('garbage-day').setup({})
   SafeRequire('present').setup {}
-  SafeRequire("conform").setup({
-    formatters_by_ft = {
-      lua = { "stylua" },
-      -- Conform will run multiple formatters sequentially
-      python = { "isort", "black" },
-      -- Use a sub-list to run only the first available formatter
-      javascript = { { "prettierd", "prettier" } },
-    },
-    format_on_save = {
-      -- These options will be passed to conform.format()
-      timeout_ms = 500,
-      lsp_fallback = true,
-    },
-  })
+  -- SafeRequire("conform").setup({
+  --   formatters_by_ft = {
+  --     lua = { "stylua" },
+  --     -- Conform will run multiple formatters sequentially
+  --     python = { "isort", "black" },
+  --     -- Use a sub-list to run only the first available formatter
+  --     javascript = { { "prettierd", "prettier" } },
+  --   },
+  --   format_on_save = {
+  --     -- These options will be passed to conform.format()
+  --     timeout_ms = 500,
+  --     lsp_fallback = true,
+  --   },
+  -- })
   SafeRequire("octo").setup()
 
   vim.api.nvim_create_autocmd('ModeChanged', {
@@ -1864,3 +1865,5 @@ require('gitblame').setup {
 }
 
 require('leetcode').setup({lang="python3"})
+
+SafeRequire('gemini').setup()
