@@ -119,10 +119,67 @@ function DefaultTable(a, b)
   end
 end
 
+LSP_CONFIG = DefaultTable({}, {
+  settings = {
+    lua_ls = {
+      Lua = {
+        runtime = { version = 'LuaJIT' },
+        diagnostics = { globals = { 'vim' } },
+        workspace = {
+          -- library = vim.api.nvim_get_runtime_file("lua/", true),
+        },
+        telemetry = { enable = false },
+      },
+    },
+    pyright = {
+      python = {
+        venvPath = vim.fn.expand("$HOME/.cache/pypoetry/virtualenvs/"),
+        analysis = {
+          autoSearchPaths = true,
+          diagnosticMode = "workspace",
+          useLibraryCodeForTypes = true,
+          diagnosticSeverityOverrides = { reportGeneralTypeIssues = "none" },
+        },
+      },
+    },
+    pylsp = { plugin = { pylint = { enabled = true } } },
+    efm = {
+      rootMarkers = { ".git/" },
+      languages = {
+        lua = {
+          {
+            formatCommand = "lua-format -i --indent-width=2 --break-after-table-lb  --extra-sep-at-table-end",
+            formatStdin = true,
+          },
+        },
+        python = { { formatCommand = "black --quiet -", formatStdin = true } },
+      },
+    },
+  },
+  filetypes = { efm = { "lua", "python", "nu" } },
+  init_options = { efm = { documentFormatting = true, hover = true } },
+})
+
+local disabled_lsp_caps = {
+  ruff = {
+    "documentFormattingProvider",
+  },
+  ruff_lsp = {
+    "documentFormattingProvider",
+  },
+  pylsp = {
+    'renameProvider', 'referencesProvider', 'hoverProvider',
+    'documentSymbolProvider', 'workspaceSymbolProvider', 'completionProvider',
+  },
+  jedi_language_server = {
+    'renameProvider', 'referencesProvider', 'hoverProvider',
+  },
+}
+
 local langservers = {
-  'dartls', 'dockerls', 'efm', 'emmet_ls',
+  'ansiblels', 'bashls', 'cssls', 'dartls', 'dockerls', 'efm', 'emmet_ls',
   'gopls', 'graphql', 'html', 'jsonls', 'marksman', 'pyright', 'rust_analyzer',
-  'sqlls', 'terraformls', 'tsserver', 'vimls', 'ruff_lsp', 'lua_ls'
+  'sqlls', 'lua_ls', 'terraformls', 'tsserver', 'vimls', 'yamlls', 'ruff_lsp',
 }
 
 for _, v in ipairs({ "node", "go" }) do
@@ -642,7 +699,17 @@ SafeRequire("mason-lspconfig").setup({
 
 SafeRequireCallback("lspconfig", function(lspconfig)
   for _, lsp in pairs(langservers) do
-    lspconfig[lsp].setup({})
+    local on_attach = function(client, bufnr)
+      if disabled_lsp_caps[lsp] then
+        for _, cap in ipairs(disabled_lsp_caps[lsp]) do
+          client.server_capabilities[cap] = false
+        end
+      end
+    end
+
+    local settings = LSP_CONFIG["settings"][lsp] or {}
+    local init_options = LSP_CONFIG["init_options"][lsp] or {}
+    lspconfig[lsp].setup({ settings = settings, init_options = init_options, on_attach = on_attach })
   end
 end)
 
@@ -668,26 +735,12 @@ SafeRequireCallback("cmp", function()
     nvim_lua = "[Lua] 🐖",
     cmp_tabnine = "[TN] 📝",
     path = "[Path] 📁",
-    copilot = "[Copilot] ",
+    copilot = "[Copilot] 🚀",
     fish = "[fish] 🐠",
     rg = "[rg] 🔎",
     luasnip = "[luasnip] 🐍",
     cmdline = "[cmdline] 📜",
   }
-
-  local function custom_format(entry, vim_item)
-    vim_item.kind = lspkind.presets.default[vim_item.kind]
-    vim_item.abbr = vim.trim(string.sub(vim_item.abbr, 1, 60))
-    local source_name = entry.source.name
-    if (vim_item.menu ~= nil and entry.completion_item.data ~= nil and
-          entry.completion_item.data.detail ~= nil) then
-      vim_item.menu = entry.completion_item.data.detail .. ' ' .. vim_item.menu
-    end
-    if source_mapping[source_name] then
-      vim_item.kind = source_mapping[source_name]
-    end
-    return vim_item
-  end
 
   local luasnip = SafeRequire("luasnip")
   if not isEmptyTable(luasnip) then
@@ -724,7 +777,6 @@ SafeRequireCallback("cmp", function()
     snippet = {
       -- REQUIRED - you must specify a snippet engine
       expand = function(args) SafeRequire('luasnip').lsp_expand(args.body) end,
-      -- expand = function(args) vim.snippet.expand(arg.body) end,
     },
     window = {
       completion = cmp.config.window.bordered(),
@@ -768,30 +820,30 @@ SafeRequireCallback("cmp", function()
       option = { additional_arguments = "--max-depth 5" },
     }, { name = 'fish' }, { name = 'buffer', keyword_length = 4 },
     }),
-    -- formatting = { format = custom_format },
-    formatting = { format = lspkind.cmp_format({
-      mode = 'symbol', -- show only symbol annotations
-      maxwidth = 50, -- prevent the popup from showing more than provided characters (e.g 50 will not show more than 50 characters)
-                     -- can also be a function to dynamically calculate max width such as 
-                     -- maxwidth = function() return math.floor(0.45 * vim.o.columns) end,
-      ellipsis_char = '...', -- when popup menu exceed maxwidth, the truncated part would show ellipsis_char instead (must define maxwidth first)
-      show_labelDetails = true, -- show labelDetails in menu. Disabled by default
-      before = function (entry, vim_item)
-        vim_item.kind = lspkind.presets.default[vim_item.kind]
-        vim_item.abbr = vim.trim(string.sub(vim_item.abbr, 1, 60))
-        local source_name = entry.source.name
-        if (vim_item.menu ~= nil and entry.completion_item.data ~= nil and
-              entry.completion_item.data.detail ~= nil) then
-          vim_item.menu = entry.completion_item.data.detail .. ' ' .. vim_item.menu
-        end
-        if source_mapping[source_name] then
-          vim_item.kind = source_mapping[source_name]
-        end
-        return vim_item
-      end
-     })},
+    formatting = {
+      format = lspkind.cmp_format({
+        mode = 'symbol', -- show only symbol annotations
+        maxwidth = 50,   -- prevent the popup from showing more than provided characters (e.g 50 will not show more than 50 characters)
+        -- can also be a function to dynamically calculate max width such as
+        -- maxwidth = function() return math.floor(0.45 * vim.o.columns) end,
+        ellipsis_char = '...',    -- when popup menu exceed maxwidth, the truncated part would show ellipsis_char instead (must define maxwidth first)
+        show_labelDetails = true, -- show labelDetails in menu. Disabled by default
 
-
+        before = function(entry, vim_item)
+          vim_item.kind = lspkind.presets.default[vim_item.kind]
+          vim_item.abbr = vim.trim(string.sub(vim_item.abbr, 1, 60))
+          local source_name = entry.source.name
+          if (vim_item.menu ~= nil and entry.completion_item.data ~= nil and
+                entry.completion_item.data.detail ~= nil) then
+            vim_item.menu = entry.completion_item.data.detail .. ' ' .. vim_item.menu
+          end
+          if source_mapping[source_name] then
+            vim_item.kind = source_mapping[source_name]
+          end
+          return vim_item
+        end
+      })
+    },
     sorting = {
       priority_weight = 2,
       comparators = {
@@ -848,7 +900,7 @@ SafeRequireCallback("cmp", function()
   end
 
   setup_cmdline(':', {
-    { name = 'cmdline',         group_index = 1 },
+    { name = 'cmdline', group_index = 1 },
   })
   setup_cmdline('/', search_sources)
   setup_cmdline('?', search_sources)
@@ -925,8 +977,9 @@ vim.api.nvim_set_keymap('n', '<Leader>esn', '', {
 vim.api.nvim_set_keymap('n', '<Leader>ess', '', {
   noremap = true,
   desc = 'Search the workspace',
-  callback = function() require'fzf-lua'.live_grep({cwd=WorkspacePath}) end,
+  callback = function() require 'fzf-lua'.live_grep({ cwd = WorkspacePath }) end,
 })
+
 
 function FindFileCwd()
   local cwd = vim.fn.getcwd()
@@ -1044,20 +1097,25 @@ end
 function DelaySetup2()
   SafeRequire('garbage-day').setup({})
   SafeRequire('present').setup {}
-  -- SafeRequire("conform").setup({
-  --   formatters_by_ft = {
-  --     lua = { "stylua" },
-  --     -- Conform will run multiple formatters sequentially
-  --     python = { "isort", "black" },
-  --     -- Use a sub-list to run only the first available formatter
-  --     javascript = { { "prettierd", "prettier" } },
-  --   },
-  --   format_on_save = {
-  --     -- These options will be passed to conform.format()
-  --     timeout_ms = 500,
-  --     lsp_fallback = true,
-  --   },
-  -- })
+  SafeRequire('gitblame').setup {
+    enabled = false,
+  }
+  SafeRequire('lspfuzzy').setup({})
+  SafeRequire("CopilotChat").setup({})
+  SafeRequire("conform").setup({
+    formatters_by_ft = {
+      lua = { "stylua" },
+      -- Conform will run multiple formatters sequentially
+      python = { "isort", "black" },
+      -- Use a sub-list to run only the first available formatter
+      javascript = { { "prettierd", "prettier" } },
+    },
+    format_on_save = {
+      -- These options will be passed to conform.format()
+      timeout_ms = 500,
+      lsp_fallback = true,
+    },
+  })
   SafeRequire("octo").setup()
 
   vim.api.nvim_create_autocmd('ModeChanged', {
@@ -1069,29 +1127,10 @@ function DelaySetup2()
       end
     end,
   })
-  SafeRequire('illuminate').configure({
-    filetypes_denylist = { 'floaterm', 'neo-tree' },
-  })
-  SafeRequire("nu").setup()
   SafeRequire("oil").setup({
     buf_options = { buflisted = true, bufhidden = "unload" },
   })
-  -- SafeRequireCallback("null-ls", function(null_ls)
-  --     null_ls.setup({
-  --         sources = {
-  --             null_ls.builtins.formatting.lua_format,
-  --             null_ls.builtins.code_actions.refactoring,
-  --             null_ls.builtins.formatting.ruff,
-  --             null_ls.builtins.diagnostics.ruff,
-  --             null_ls.builtins.diagnostics.pylint.with({
-  --                 command = CheckOutput("which pylint"),
-  --                 diagnostics_postprocess = function(diagnostic)
-  --                     diagnostic.code = diagnostic.message_id
-  --                 end
-  --             })
-  --         }
-  --     })
-  -- end)
+
   SafeRequireCallback("lsp_lines", function(lines)
     lines.setup()
     vim.diagnostic.config({ virtual_text = false })
@@ -1119,29 +1158,29 @@ function DelaySetup2()
     pcall(vim.api.nvim_command, 'source ' .. WorkspaceVimPath)
   end
 
-    SafeRequire("noice").setup({
-      health = { checker = false },
-      messages = {
-        enabled = true,
-        view = "mini",
-        view_error = "notify",
-        view_warn = "mini",
-        view_history = "messages",
-        view_search = "virtualtext",
+  SafeRequire("noice").setup({
+    health = { checker = false },
+    messages = {
+      enabled = true,
+      view = "mini",
+      view_error = "notify",
+      view_warn = "mini",
+      view_history = "messages",
+      view_search = "virtualtext",
+    },
+    notify = { enabled = true },
+    lsp = {
+      hover = { enabled = true },
+      signature = { enabled = false },
+      message = { enabled = true },
+      progress = { enabled = true },
+      override = {
+        ["vim.lsp.util.convert_input_to_markdown_lines"] = true,
+        ["vim.lsp.util.stylize_markdown"] = true,
+        ["cmp.entry.get_documentation"] = true,
       },
-      notify = { enabled = true },
-      lsp = {
-        hover = { enabled = true },
-        signature = { enabled = false },
-        message = { enabled = true },
-        progress = { enabled = true },
-        override = {
-          ["vim.lsp.util.convert_input_to_markdown_lines"] = true,
-          ["vim.lsp.util.stylize_markdown"] = true,
-          ["cmp.entry.get_documentation"] = true,
-        },
-      },
-    })
+    },
+  })
 
   SafeRequire("modicator").setup()
   SafeRequireCallback("dap", function(dap)
@@ -1162,11 +1201,6 @@ function DelaySetup2()
   end)
   SafeRequire("dapui").setup {}
   SafeRequire('neogen').setup {}
-  SafeRequire('rest-nvim').setup {
-    jump_to_request = true,
-    env_file = '.env',
-    skip_ssl_verification = true,
-  }
   SafeRequireCallback("hop", function(hop)
     hop.setup {
       winblend = 10,
@@ -1188,7 +1222,6 @@ function DelaySetup2()
   end)
 
   SafeRequire('colorizer').setup()
-  SafeRequire("nu").setup()
   SafeRequire('neo-zoom').setup({
     left_ratio = 0.2,
     top_ratio = 0.03,
@@ -1236,25 +1269,6 @@ function DelaySetup2()
 
   if Random(1, 100) < 0 then UpdatePlug() end
 
-  SafeRequire("Comment").setup()
-
-  function fzf_multi_select(prompt_bufnr)
-    local actions = require("telescope.actions")
-    local action_state = require("telescope.actions.state")
-
-    local picker = action_state.get_current_picker(prompt_bufnr)
-    local num_selections = table.getn(picker:get_multi_selection())
-
-    if num_selections > 1 then
-      -- actions.file_edit throws - context of picker seems to change
-      -- actions.file_edit(prompt_bufnr)
-      actions.send_selected_to_qflist(prompt_bufnr)
-      actions.open_qflist()
-    else
-      actions.file_edit(prompt_bufnr)
-    end
-  end
-
   SafeRequireCallback("telescope", function(telescope)
     telescope.setup({
       pickers = { buffers = { sort_mru = true, ignore_current_buffer = true } },
@@ -1268,7 +1282,9 @@ function DelaySetup2()
         },
       },
     })
-    telescope.load_extension("frecency")
+    SafeRequireCallback("telescope.frecency", function(_)
+      telescope.load_extension("frecency")
+    end)
   end)
 
   SafeRequire("copilot").setup({
@@ -1317,7 +1333,7 @@ function DelaySetup1()
       separator = '->',
       hide_keyword = true,
       show_file = true,
-      folder_level = 2,
+      folder_level = 1,
     },
     lightbulb = { enable = false, virtual_text = false },
   })
@@ -1607,7 +1623,7 @@ end
 SafeRequire('due_nvim').setup { use_clock_time = true }
 
 SafeRequire('nvim-lightbulb').setup({})
-SafeRequire("outline").setup({})
+SafeRequire("symbols-outline").setup({ auto_preview = true, width = 20 })
 SafeRequire('git-conflict').setup()
 
 function KillAndRerunTerm(name, command, opts)
@@ -1773,7 +1789,7 @@ vim.g.editconfig = true
 
 local function checkIsEink()
   if (vim.g.fullWidth ~= vim.o.columns) then
-    if (tostring(vim.o.columns) == vim.env.EINK_WIDTH ) then
+    if (tostring(vim.o.columns) == vim.env.EINK_WIDTH) then
       vim.schedule(function() vim.o.background = 'light' end)
     else
       vim.schedule(function() vim.o.background = 'dark' end)
@@ -1853,17 +1869,3 @@ function SwitchWordCase()
     print("Not a snake_case or camelCase word")
   end
 end
-
-require("CopilotChat").setup {
-  debug = true, -- Enable debugging
-  -- See Configuration section for rest
-}
-
-require('lspfuzzy').setup {}
-require('gitblame').setup {
-    enabled = false,
-}
-
-require('leetcode').setup({lang="python3"})
-
-SafeRequire('gemini').setup()

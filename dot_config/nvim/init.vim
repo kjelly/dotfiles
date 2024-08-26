@@ -118,9 +118,10 @@ Plug 'mizlan/iswap.nvim'
 Plug 'nvim-treesitter/nvim-treesitter-textobjects'
 Plug 'https://github.com/theHamsta/nvim-treesitter-pairs'
 Plug 'romgrk/nvim-treesitter-context'
-Plug 'nvim-treesitter/playground'
 Plug 'nvim-treesitter/nvim-treesitter-refactor'
 "Yet another tree-sitter powered indent plugin for Neovim.
+"Plug 'SmiteshP/nvim-gps'
+Plug 'https://github.com/SmiteshP/nvim-navic'
 Plug 'm-demare/hlargs.nvim'
 Plug 'https://github.com/kylechui/nvim-surround'
 Plug 'https://github.com/smjonas/live-command.nvim'
@@ -142,8 +143,7 @@ Plug 'https://github.com/nvim-lualine/lualine.nvim'
 " A search panel for neovim.
 Plug 'nvim-lua/popup.nvim'
 Plug 'nvim-lua/plenary.nvim'
-Plug 'nvim-telescope/telescope.nvim', { 'tag': '0.1.8' }
-Plug 'https://github.com/nvim-telescope/telescope-frecency.nvim'
+Plug 'nvim-telescope/telescope.nvim', { 'tag': '*' }
 Plug 'kkharji/sqlite.lua'
 
 Plug 'nanotee/zoxide.vim'
@@ -174,6 +174,7 @@ Plug 'NFrid/due.nvim'
 Plug 'https://github.com/folke/which-key.nvim'
 Plug 'https://github.com/romainl/vim-cool' " show hightlight in search mode
 
+
 Plug 'kevinhwang91/promise-async'
 
 " Fold
@@ -181,25 +182,20 @@ Plug 'https://github.com/kevinhwang91/nvim-ufo'
 
 Plug 'towolf/vim-helm'
 
-" markdown support with some fetures
-" Plug 'https://github.com/SidOfc/mkdx'
-
 " notify ui
 Plug 'rcarriga/nvim-notify'
 
 " Disable scrollbar. Not useful for me.
 " Plug 'https://github.com/petertriho/nvim-scrollbar'
-Plug 'https://github.com/Chaitanyabsprip/present.nvim'
-
-Plug 'jdhao/better-escape.vim'
+"Plug 'https://github.com/Chaitanyabsprip/present.nvim'
 
 Plug 'williamboman/mason.nvim'
 Plug 'williamboman/mason-lspconfig.nvim'
 Plug 'neovim/nvim-lspconfig'
+Plug 'ray-x/lsp_signature.nvim'
 Plug 'nvim-tree/nvim-web-devicons'
 Plug 'https://github.com/glepnir/lspsaga.nvim'
-" Plug 'jubnzv/virtual-types.nvim'
-Plug 'https://github.com/hedyhli/outline.nvim'
+"Plug 'https://github.com/hedyhli/outline.nvim'
 Plug 'zeioth/garbage-day.nvim'
 
 Plug 'stevearc/conform.nvim'
@@ -211,13 +207,10 @@ if empty($SSH_CLIENT)
 else
 endif
 
-Plug 'https://github.com/nyngwang/NeoZoom.lua'
-
 " Markdown table formaater
 Plug 'https://github.com/junegunn/vim-easy-align'
 
 " Git
-"Plug 'https://github.com/lambdalisue/gina.vim'
 Plug 'https://github.com/akinsho/git-conflict.nvim'
 
 Plug 'https://github.com/kjelly/kube-nvim'
@@ -255,44 +248,35 @@ Plug 'https://github.com/m-gail/escape.nvim'
 Plug 'rktjmp/lush.nvim'
 
 " colorscheme
-Plug 'catppuccin/nvim', { 'as': 'catppuccin' }
+Plug 'dracula/vim', { 'as': 'dracula' }
 Plug 'sainnhe/gruvbox-material'
 Plug 'gruvbox-community/gruvbox'
 Plug 'folke/tokyonight.nvim'
 Plug 'marko-cerovac/material.nvim'
-Plug 'briones-gabriel/darcula-solid.nvim'
 Plug 'rktjmp/lush.nvim'
-Plug 'eddyekofo94/gruvbox-flat.nvim'
 Plug 'https://github.com/Mofiqul/dracula.nvim'
 Plug 'projekt0n/github-nvim-theme'
-Plug 'yong1le/darkplus.nvim'
 Plug 'ray-x/aurora'
 Plug 'https://github.com/Pocco81/Catppuccino.nvim'
-Plug 'frenzyexists/aquarium-vim', { 'branch': 'develop' }
 Plug 'https://github.com/sainnhe/edge'
-Plug 'yashguptaz/calvera-dark.nvim'
 Plug 'https://github.com/sainnhe/everforest'
 Plug 'https://github.com/navarasu/onedark.nvim'
 Plug 'lourenci/github-colors'
-Plug 'shaunsingh/moonlight.nvim'
 Plug 'https://github.com/savq/melange'
 Plug 'https://github.com/rmehri01/onenord.nvim'
 Plug 'https://github.com/luisiacc/gruvbox-baby'
 Plug 'https://github.com/Shatur/neovim-ayu'
 Plug 'https://github.com/NTBBloodbath/doom-one.nvim'
 Plug 'https://github.com/rockerBOO/boo-colorscheme-nvim'
-Plug 'https://github.com/Everblush/everblush.nvim'
-Plug 'dracula/vim', { 'as': 'dracula' }
 Plug 'shaunsingh/nord.nvim'
-Plug 'titanzero/zephyrium'
 Plug 'rockyzhang24/arctic.nvim'
 Plug 'rebelot/kanagawa.nvim'
 Plug 'https://github.com/Almo7aya/neogruvbox.nvim'
 Plug 'https://github.com/bluz71/vim-nightfly-guicolors'
-Plug 'https://github.com/cranberry-clockworks/coal.nvim'
 
 " file explorer for ssh
 Plug 'https://github.com/stevearc/oil.nvim'
+
 
 Plug 'tpope/vim-fugitive' " for git
 if executable("gh") == 1
@@ -304,9 +288,6 @@ Plug 'mbbill/undotree', { 'on': ['UndotreeToggle']}
 " Bookmarks and marks
 " Disable this to use float floaterm.
 Plug 'https://github.com/chentoast/marks.nvim'
-
-" AI
-Plug 'https://github.com/kiddos/gemini.nvim'
 
 
 Plug 'https://github.com/zbirenbaum/copilot.lua'
@@ -322,10 +303,9 @@ Plug 'lukas-reineke/cmp-rg'
 Plug 'https://github.com/petertriho/cmp-git'
 Plug 'https://github.com/mtoohey31/cmp-fish', { 'for': 'fish'}
 Plug 'https://github.com/hrsh7th/cmp-nvim-lsp-document-symbol'  "use /@
-Plug 'ray-x/lsp_signature.nvim'
 Plug 'saadparwaiz1/cmp_luasnip'
 
-"Plug 'https://github.com/windwp/nvim-autopairs'
+Plug 'https://github.com/windwp/nvim-autopairs'
 Plug 'rafamadriz/friendly-snippets'
 Plug 'https://github.com/L3MON4D3/LuaSnip'
 "Plug 'tzachar/cmp-tabnine', { 'do': './install.sh' }
@@ -454,7 +434,6 @@ let $BROWSER='w3m'
 let $IN_VIM=1
 
 let g:test#strategy = "neovim" 
-let g:leetcode_solution_filetype='python3'
 let g:floaterm_wintype='split'
 let g:floaterm_position='top'
 let g:floaterm_width=1.0
@@ -626,7 +605,6 @@ nnoremap <m-s> <cmd>lua SymbolToggle()<cr>
 " save
 nnoremap <c-s> <cmd>w<cr>
 inoremap <c-s> <cmd>w<cr><esc>
-tnoremap <c-s> <C-\><C-n> " exit terminal
 
 inoremap <expr> <Esc>      pumvisible() ? "\<C-e>" : "\<Esc>"
 inoremap <expr> <Down>     pumvisible() ? "\<C-n>" : "\<Down>"
@@ -1061,6 +1039,7 @@ nnoremap <silent> <leader>esi <cmd>lua EditFile(vim.env.MYVIMRC)<cr>
 nnoremap <silent> <leader>esl <cmd>lua EditFile('~/.vim_custom.vim')<cr>
 nnoremap <silent> <leader>esc <cmd>lua EditFile('~/.config/nvim/config.lua')<cr>
 nnoremap <silent> <leader>esj <cmd>call EditTodayNote()<cr>
+nnoremap <silent> <leader>esd <cmd>e .<cr>
 nnoremap <silent> <leader>er :registers<cr>
 nnoremap <leader>ef :set filetype=
 nnoremap <leader>ea :filetype detect<cr>
@@ -1150,11 +1129,9 @@ nnoremap <silent> <leader>lts :TestSuite<cr>
 nnoremap <silent> <leader>ltv :TestVisit<cr>
 nnoremap <leader>lg <cmd>Neogen<cr>
 
-nnoremap <silent> <leader>lel :Leet list<cr>
-nnoremap <silent> <leader>les :Leet submit<cr>
-nnoremap <silent> <leader>let :Leet test<cr>
-nnoremap <silent> <leader>led :Leet daily<cr>
-nnoremap <silent> <leader>lem :Leet<cr>
+nnoremap <silent> <leader>lel :LeetCodeList<cr>
+nnoremap <silent> <leader>les :LeetCodeSubmit<cr>
+nnoremap <silent> <leader>let :LeetCodeTest<cr>
 
 nnoremap <silent> <localleader>dt <cmd>lua require'dap'.toggle_breakpoint()<cr>
 nnoremap <silent> <localleader>dc <cmd>lua require'dap'.continue()<cr>
@@ -1215,6 +1192,8 @@ let g:switch_custom_definitions =
     \   ['ON', 'OFF'],
     \   ['[ ]', '[x]'],
     \   ['TODO', 'WORKING','DONE'],
+    \   ['enabled', 'disabled'],
+    \   ['Enabled', 'Disabled'],
     \ ]
 
 let g:any_jump_disable_default_keybindings = 1
@@ -1237,7 +1216,6 @@ command! DisableTmuxKey
          \ })
 
 let g:qs_highlight_on_keys = ['f', 'F', 't', 'T']
-let g:better_escape_shortcut = 'jk'
 let g:fzf_colors = {'gutter': ['bg', 'Normal']}
 let g:fzf_floaterm_newentries = {
   \ '+root' : {
@@ -1268,7 +1246,7 @@ nnoremap Y "+y
 vnoremap Y "+y
 
 exec 'luafile' g:MYVIMRC_DIR . '/config.lua'
-colorscheme gruvbox
+colorscheme tokyonight
 silent! source ~/.vim_custom.vim
 
 " hightlight
@@ -1276,8 +1254,3 @@ highlight! link HopNextKey Error
 highlight! link HopNextKey1 Error
 highlight! link HopNextKey2 Error
 highlight! link WinSeparator Boolean
-
-
-noremap <subleader> <Nop>
-map . <Subleader>
-nnoremap <subleader>a <cmd>ls<cr>
